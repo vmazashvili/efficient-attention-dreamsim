@@ -1,0 +1,1 @@
+run_id,stage,seed,epochs,val_2afc,test_2afc,test_2afc_imagenet,test_2afc_no_imagenet,gpu,min_per_epoch,commit,date

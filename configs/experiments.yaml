@@ -1,0 +1,29 @@
+# block indices are 1-indexed (1 = first transformer block, 12 = last)
+baselines:
+  B0:    {mixer: none, train: false}
+  B1:    {mixer: none, train: true, seeds: [1234, 1235, 1236]}
+  B-rel: {mixer: none, checkpoint: dreamsim_dino_vitb16_release, purpose: eval_pipeline_check}
+
+tier_a:
+  M-L4:  {mixer: meta, blocks: [9, 10, 11, 12], heal: true}
+  M-A12: {mixer: meta, blocks: all, heal: true}
+  P-L4:  {mixer: pyra, blocks: [9, 10, 11, 12], heal: true}
+  P-A12: {mixer: pyra, blocks: all, heal: true}
+  H-L4:  {mixer: moh, blocks: [9, 10, 11, 12], heal: true}
+  H-A12: {mixer: moh, blocks: all, heal: true}
+
+tier_b:
+  C1:       {mixer: none, unfreeze_blocks: [9, 10, 11, 12], purpose: capacity_control}
+  M-L4-nh:  {mixer: meta, blocks: [9, 10, 11, 12], heal: false}
+  P-L4-nh:  {mixer: pyra, blocks: [9, 10, 11, 12], heal: false}
+  H-L4-nh:  {mixer: moh, blocks: [9, 10, 11, 12], heal: false}
+  M-F4:     {mixer: meta, blocks: [1, 2, 3, 4], heal: true}
+  P-F4:     {mixer: pyra, blocks: [1, 2, 3, 4], heal: true}
+  H-F4:     {mixer: moh, blocks: [1, 2, 3, 4], heal: true}
+  H75-L4:   {mixer: moh, blocks: [9, 10, 11, 12], heal: true, top_k: 7}
+
+tier_c_timing:
+  resolutions: [224, 336, 448, 672]
+  configs: [none, M-L4, M-A12, P-L4, P-A12, H-L4, H-A12]
+  gpu: {precision: [fp16, fp32], batch: [1, 64], warmup: 25, iters: 200}
+  cpu: {threads: 1, batch: 1, warmup: 20, iters: 100}

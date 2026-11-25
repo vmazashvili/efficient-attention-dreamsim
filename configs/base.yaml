@@ -1,0 +1,40 @@
+seed: 1234
+backbone: vit_base_patch16_224.dino
+image_size: 224
+interpolation: bicubic
+normalize: imagenet
+embedding: cls_block12_prenorm
+
+data_root: /content/nights224
+min_votes: 6
+
+train:
+  optimizer: adam
+  lr: 3.0e-4
+  weight_decay: 0.0
+  batch_size: 32
+  epochs: 8
+  margin: 0.05
+  amp: true
+  lora:
+    target_modules: [qkv]
+    r: 16
+    alpha: 32
+    dropout: 0.2
+  replaced_block_lr: 1.0e-4
+
+heal:
+  epochs: 2
+  optimizer: adamw
+  lr: 1.0e-4
+  images: train_split_only
+  loss: [block_mse_normalized, final_cls_cosine]
+
+mixers:
+  meta: {pool_size: 3, cls_rule: global_mean}
+  pyra: {reduction: 2, cls_rule: keep_unreduced, sr_init: window_mean}
+  moh: {shared_heads: 2, routed_heads: 10, top_k: 4, load_balance_weight: 0.01}
+
+eval:
+  splits: [test, test_imagenet, test_no_imagenet]
+  bootstrap_resamples: 10000

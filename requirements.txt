@@ -1,0 +1,13 @@
+# pin exact versions once the first Colab environment works (SPEC R14)
+torch
+torchvision
+timm
+peft
+numpy
+pandas
+scipy
+scikit-learn
+pyyaml
+tqdm
+matplotlib
+pillow
