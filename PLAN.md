@@ -42,7 +42,7 @@ If the CV written moves from 22 Jan to the 18 Feb fallback, the freeze moves to 
 - [ ] Meta, Pyra (R=2), MoH (2 shared + 4/10 routed), each with its CLS rule
 - [ ] Unit tests: Pyra with R=1 and identity W equals the original attention; MoH with all heads at weight 1 equals the original; Meta's CLS receives patch information; shapes at 224 and 448
 - [ ] Stage A healing; Stage B reuses the baseline training code
-- [ ] Smoke run each mechanism on last-4 with 1,000 triplets
+- [ ] Smoke run each mechanism on last-4 on the smoke subset (SPEC §6 Subsets)
 - [ ] Tier C timing sweep at 224/336/448/672 px (no training needed)
 - [ ] **G2**
 

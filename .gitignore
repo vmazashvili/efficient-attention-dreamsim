@@ -220,7 +220,9 @@ __marimo__/
 .streamlit/secrets.toml
 
 # project data and artifacts
-data/
+/data/*
+!/data/splits/
+/data/splits/available/
 nights*/
 checkpoints/
 embeddings/
