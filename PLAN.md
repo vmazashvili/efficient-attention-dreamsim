@@ -27,9 +27,10 @@ If the CV written moves from 22 Jan to the 18 Feb fallback, the freeze moves to 
 
 ## P1 — Data and baseline · Mon 30 Nov – Tue 9 Dec
 
-- [ ] Colab day 1: locate `data.csv` for the chunked download (SPEC §6, O1)
+- [x] Locate `data.csv` for the chunked download (SPEC §6, O1): `scripts/fetch_data_csv.py`
+- [x] Subsets in `data/splits/` (SPEC §6 Subsets)
 - [ ] Measure the 224 px size on chunk 000 → full train or subset (O2)
-- [ ] Run the resumable prep job; verify 15,941 / 1,958 / 2,120 triplets and that every path exists
+- [ ] Run the resumable prep job; verify 13,900 / 1,720 / 1,824 triplets (votes ≥ 6) and that every path exists
 - [ ] B0 zero-shot DINO (target 90.1)
 - [ ] B-rel: released DreamSim `dino_vitb16` scored with our eval code (target 94.6, O4)
 - [ ] B1 seed 1, record minutes per epoch on T4 (O3)

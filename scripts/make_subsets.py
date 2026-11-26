@@ -12,7 +12,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 MIN_VOTES = 6
-EXPECTED = {"train": 15941, "val": 1958, "test": 2120}
+EXPECTED = {"train": 13900, "val": 1720, "test": 1824}
 TRIPLET_SUBSETS = [  # name, split, size
     ("smoke_train", "train", 256),
     ("smoke_val", "val", 128),

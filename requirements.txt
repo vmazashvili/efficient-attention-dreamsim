@@ -11,3 +11,4 @@ pyyaml
 tqdm
 matplotlib
 pillow
+remotezip
