@@ -343,7 +343,7 @@ All variant runs = Stage A + Stage B, 1 seed, unless stated.
 | B | M-L4-nh, P-L4-nh, H-L4-nh | each | 9–12 | **no** | Healing ablation |
 | B | C1 | none | 9–12 fully trainable | — | Capacity control |
 | B | H75-L4 | MoH 75% | 9–12 | yes | Head-budget ablation |
-| C | timing sweep | all mechanisms × configs | — | — | RQ2 at 224/336/448/672 px. **No training needed**: latency doesn't depend on trained weights |
+| C | timing sweep | all mechanisms × configs | — | — | RQ2 at 224/448/672/896 px (patch grids 14/28/42/56; 336 px gives 21×21, which Pyra's R=2 can't halve). **No training needed**: latency doesn't depend on trained weights |
 
 Tier A = 9 trained runs (B1 × 3 + 6 variants). Estimated 1–1.5 GPU-hours each on a T4
 (to be measured on Day 1), ≈ 12 GPU-hours total. Tier B runs only after Tier A is

@@ -23,7 +23,7 @@ tier_b:
   H75-L4:   {mixer: moh, blocks: [9, 10, 11, 12], heal: true, top_k: 7}
 
 tier_c_timing:
-  resolutions: [224, 336, 448, 672]
+  resolutions: [224, 448, 672, 896]
   configs: [none, M-L4, M-A12, P-L4, P-A12, H-L4, H-A12]
   gpu: {precision: [fp16, fp32], batch: [1, 64], warmup: 25, iters: 200}
   cpu: {threads: 1, batch: 1, warmup: 20, iters: 100}

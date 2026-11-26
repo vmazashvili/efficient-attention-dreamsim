@@ -11,6 +11,7 @@ gets **one off-day block per week**; GPU runs go in the background while other w
 | G1 | Tue 9 Dec | B0 = 90.1 ± 0.5 · B-rel = 94.6 ± 0.3 · B1 seed 1 = 94.6 ± 1.0 | Debug the pipeline. No mechanism code until G1 passes |
 | G2 | Tue 23 Dec | Meta, Pyra, MoH all train end-to-end on last-4 without NaN; healing loss falls; unit tests pass; timing sweep table exists | Drop the failing mechanism to Tier B, run Tier A with the rest |
 | Freeze | Tue 6 Jan | Tier A results + saved embeddings committed | Whatever isn't done is cut, not squeezed into exam weeks |
+| Go/no-go | Tue 6 Jan (at Freeze) | Present on 22 Jan if: Tier A done with analysis tables generated · written-exam prep on track · presentations confirmed for 22 Jan. Commit by submitting the course form on 15 Jan | Present in March (P5) |
 
 If the CV written moves from 22 Jan to the 18 Feb fallback, the freeze moves to 20 Jan.
 
@@ -45,7 +46,7 @@ If the CV written moves from 22 Jan to the 18 Feb fallback, the freeze moves to 
 - [ ] Unit tests: Pyra with R=1 and identity W equals the original attention; MoH with all heads at weight 1 equals the original; Meta's CLS receives patch information; shapes at 224 and 448
 - [ ] Stage A healing; Stage B reuses the baseline training code
 - [ ] Smoke run each mechanism on last-4 on the smoke subset (SPEC §6 Subsets)
-- [ ] Tier C timing sweep at 224/336/448/672 px (no training needed)
+- [ ] Tier C timing sweep at 224/448/672/896 px (no training needed)
 - [ ] **G2**
 
 ## P3 — Experiments · Wed 24 Dec – Tue 6 Jan
@@ -54,18 +55,23 @@ If the CV written moves from 22 Jan to the 18 Feb fallback, the freeze moves to 
 - [ ] Tier A: M-L4, M-A12, P-L4, P-A12, H-L4, H-A12
 - [ ] Save test embeddings + per-block features for every trained model (SPEC §8.3)
 - [ ] Log every run in `results/runs.csv`
+- [ ] Write the analysis scripts alongside the runs, tested on B1's outputs, then run on Tier A (laptop):
+  - `stats.py`: bootstrap CIs, McNemar + Holm
+  - `dispersion.py`: Gaussian and Kozachenko–Leonenko entropy, effective rank, linear CKA
+  - Pareto plots: 2AFC vs T4 latency, vs CPU latency, vs FLOPs
 - [ ] Tier B, only if Tier A is done by 3 Jan, in this order: C1 → healing ablation (×3) → first-4 (×3) → H75-L4
-- [ ] **Freeze**
+- [ ] **Freeze** and **go/no-go** for 22 Jan
 
 ## P4 — Exams · 7 Jan – 12 Feb
 
 No project work. CV written 22 Jan, Robotics 1 written 12 Feb.
 
+If go: slides and README finished, course form submitted 15 Jan, repo final 20 Jan,
+present 22 Jan. P5's items then have to be done by 20 Jan.
+
 ## P5 — Analysis and delivery · 13 Feb – presentation
 
-- [ ] Statistics: bootstrap CIs, McNemar + Holm (laptop)
-- [ ] Dispersion: entropy (two estimators), effective rank, CKA from saved embeddings (laptop)
-- [ ] Pareto plots: 2AFC vs T4 latency, vs CPU latency, vs FLOPs
+- [ ] Regenerate analysis tables and plots with the final runs (incl. any Tier B)
 - [ ] Hypotheses H1–H5: confirmed / refuted, one line each
 - [ ] Notebook runs end-to-end on a fresh Colab with GPU (course requirement)
 - [ ] README and slides, written by me
