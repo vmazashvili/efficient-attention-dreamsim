@@ -36,12 +36,12 @@ def make_optimizer(model, train_cfg):
                             weight_decay=train_cfg["weight_decay"])
 
 
-def train_step(model, batch, opt, scaler, margin, device, amp):
+def train_step(model, batch, opt, scaler, margin, device, amp, grad_checkpoint=False):
     ref, left, right, target, _ = (t.to(device, non_blocking=True) for t in batch)
     b = ref.shape[0]
     # ref is embedded twice, as in DreamSim's two forward calls, so it gets independent LoRA dropout
     with torch.autocast("cuda", dtype=torch.float16, enabled=amp):
-        e = embed(vit_of(model), torch.cat([ref, left, ref, right]))
+        e = embed(vit_of(model), torch.cat([ref, left, ref, right]), grad_checkpoint=grad_checkpoint)
     e = e.float()
     loss = hinge_loss(distance(e[:b], e[b:2 * b]), distance(e[2 * b:3 * b], e[3 * b:]), target, margin)
     opt.zero_grad(set_to_none=True)
@@ -81,6 +81,7 @@ def train_b1(model, train_ds, val_loader, ckpt_dir, train_cfg, seed, device, epo
     epochs = epochs or train_cfg["epochs"]
     amp = bool(train_cfg["amp"]) and device == "cuda"
     margin = train_cfg["margin"]
+    grad_checkpoint = bool(train_cfg.get("grad_checkpoint", False))
     ckpt_dir = Path(ckpt_dir)
     last, best = ckpt_dir / "last.pt", ckpt_dir / "best.pt"
     model.to(device)
@@ -105,7 +106,7 @@ def train_b1(model, train_ds, val_loader, ckpt_dir, train_cfg, seed, device, epo
         model.train()
         loader = DataLoader(train_ds, batch_size=train_cfg["batch_size"], shuffle=True, num_workers=num_workers,
                             pin_memory=device == "cuda", generator=torch.Generator().manual_seed(seed + epoch))
-        losses = [train_step(model, batch, opt, scaler, margin, device, amp) for batch in loader]
+        losses = [train_step(model, batch, opt, scaler, margin, device, amp, grad_checkpoint) for batch in loader]
         minutes = (time.time() - t0) / 60
         entry = {"epoch": epoch, "train_loss": sum(losses) / len(losses), "minutes": minutes,
                  "val_2afc": val_2afc(model, val_loader, device)}

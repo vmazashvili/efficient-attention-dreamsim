@@ -17,6 +17,7 @@ train:
   epochs: 8
   margin: 0.05
   amp: true
+  grad_checkpoint: false
   lora:
     target_modules: [qkv]
     r: 16

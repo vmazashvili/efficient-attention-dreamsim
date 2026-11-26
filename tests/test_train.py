@@ -90,3 +90,21 @@ def test_train_b1_resumes_and_keeps_best(tmp_path):
     best = torch.load(tmp_path / "best.pt", weights_only=False)
     assert best["epoch"] == r2["best_epoch"]
     assert r2["best_val"] == max(h["val_2afc"] for h in r2["history"])
+
+
+def test_grad_checkpoint_gives_identical_step():
+    batch = next(iter(DataLoader(fake_triplets(4), batch_size=4)))
+    out = {}
+    for flag in (False, True):
+        model = tiny_b1(0)
+        model.train()
+        opt = make_optimizer(model, CFG)
+        scaler = torch.amp.GradScaler("cuda", enabled=False)
+        torch.manual_seed(123)  # same LoRA dropout masks in both runs
+        loss = train_step(model, batch, opt, scaler, CFG["margin"], "cpu", amp=False, grad_checkpoint=flag)
+        grads = {k: p.grad.clone() for k, p in model.named_parameters() if p.requires_grad}
+        out[flag] = loss, grads
+    (l0, g0), (l1, g1) = out[False], out[True]
+    assert l0 > 0 and l0 == pytest.approx(l1, rel=1e-6)
+    assert g0.keys() == g1.keys() and any(g.abs().sum() > 0 for g in g0.values())
+    assert all(torch.allclose(g0[k], g1[k], rtol=1e-5, atol=1e-8) for k in g0)
