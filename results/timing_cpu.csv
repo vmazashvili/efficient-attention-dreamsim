@@ -1,0 +1,2 @@
+date,device,on_ac,torch,timm,fused_attn,sdpa_op,config,res,precision,batch,threads,median_ms,iqr_ms,peak_mem_mb,gflops,flop_model_gflops,flop_diff_pct,params_m,commit
+2026-11-26,Intel(R) Core(TM) i5-7300U CPU @ 2.60GHz,True,2.15.0+cpu,1.0.31,True,aten::_scaled_dot_product_flash_attention_for_cpu,none,224,fp32,1,1,550.2034314995399,15.618538000580884,,35.126,35.126,0.0,85.799,e083b7b
