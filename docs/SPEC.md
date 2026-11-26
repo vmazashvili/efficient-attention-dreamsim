@@ -250,7 +250,10 @@ C1: baseline with blocks 9–12 fully trainable plus LoRA elsewhere.
 - Category = `prompt` (1,448 categories in filtered train; median 9 triplets each,
   median 1 in val and test).
 - Full archive `nights.zip`: **61.5 GB** (58 GB unzipped), served with HTTP range
-  support. Colab's disk and a free 15 GB Drive cannot hold it.
+  support.
+- Storage (checked 26 Nov): Colab VM disk **113 GB** free; Drive is the institutional
+  account, **800 GB** per-user quota. Storage no longer limits the dataset choice; the
+  chunked pipeline stays because training needs the small 224 px copy on local disk.
 - A chunked download exists: 100 `ref` + 100 `distort` zips from
   `data.csail.mit.edu/nights/nights_chunked/` (DreamSim `dataset/download_chunked_dataset.sh`).
   It contains no `data.csv` (`nights_chunked/data.csv` and `nights/data.csv` are 404).
@@ -262,7 +265,8 @@ C1: baseline with blocks 9–12 fully trainable plus LoRA elsewhere.
 
 ### Unverified — Day-1 checks
 
-1. **Size of the 224 px copy** (decides full set vs train subset).
+1. **Size of the 224 px copy and time to copy it from Drive to `/content`** (the
+   per-session setup cost; decides whether train stays full).
 
 ### Preparation pipeline (one Colab job, resumable per chunk)
 
@@ -276,8 +280,9 @@ lossless PNG → delete chunk → record progress
   decoding 768 px PNGs online would bottleneck training).
 - "Manageable subset", as the brief puts it: the 224 px lossless copy replaces the 58 GB
   originals. **Test and val are always full**, for comparability with published numbers.
-  The train split is subsampled (stratified by category) only if the 224 px copy exceeds
-  ~6 GB. If so, run the baseline once on full train too, to show subsampling isn't what
+  **Train is used in full** by default. Fallback: subsample train (stratified by
+  category) only if copying the 224 px copy to `/content` each session is impractical
+  (O2). If so, run the baseline once on full train too, to show subsampling isn't what
   explains any gap.
 - Verify after preparation: triplet counts per split equal 13,900 / 1,720 / 1,824; every
   path exists; checksum the manifest.
@@ -414,7 +419,7 @@ better on one (Schiavella et al.'s definition).
 
 | # | Risk | Effect if ignored | Mitigation |
 |---|---|---|---|
-| R1 | 58 GB dataset vs Colab/Drive limits | Can't start | Chunked download + resize-on-the-fly (§6) |
+| R1 | 58 GB dataset vs Colab/Drive limits | Can't start | Chunked download + resize-on-the-fly (§6); 800 GB institutional Drive and 113 GB VM disk remove the hard limit |
 | R2 | `data.csv` missing from chunked download | No labels | Confirmed missing; extracted from `nights.zip` with `remotezip` (§6) |
 | R3 | Colab free volatility: no GPU, timeouts, quotas | Lost runs, slipped schedule | Resumable runs, checkpoint to Drive every epoch, short jobs, run log; Kaggle as backup |
 | R4 | 2 vCPUs → dataloader bottleneck | GPU idle, runs 3–5× slower | Pre-resized lossless data copied to local disk |
@@ -449,7 +454,7 @@ THINGS) · quantisation, pruning, distillation into smaller backbones · a LaTeX
 | # | Item | Resolved by | When |
 |---|---|---|---|
 | O1 | `data.csv` source in chunked path | **Resolved 26 Nov**: only in `nights.zip`; `scripts/fetch_data_csv.py` (§6) | — |
-| O2 | Size of the 224 px copy → full train or subset | Measure on chunk 000 | P1 day 1 |
+| O2 | Size of the 224 px copy and Drive → `/content` copy time → full train or subset | Measure on chunk 000, extrapolate ×100 | P1 day 1 |
 | O3 | T4 time per epoch → is Tier A feasible as estimated | First B1 run | P1 |
 | O4 | Our eval reproduces the released checkpoint (B-rel = 94.6) | B-rel | P1 |
 | O5 | March presentation date and form deadline | Course page / Amerini | This week |
