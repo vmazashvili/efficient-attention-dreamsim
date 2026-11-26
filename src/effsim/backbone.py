@@ -6,8 +6,8 @@ import torch
 MODEL_NAME = "vit_base_patch16_224.dino"
 
 
-def load_dino(pretrained=True):
-    return timm.create_model(MODEL_NAME, pretrained=pretrained).eval()
+def load_dino(pretrained=True, name=MODEL_NAME):
+    return timm.create_model(name, pretrained=pretrained).eval()
 
 
 def embed(model, x, all_blocks=False):

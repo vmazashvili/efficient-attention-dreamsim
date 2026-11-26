@@ -152,10 +152,15 @@ What this means, before any code:
 | Input | 224×224, bicubic resize, ImageNet mean/std | DreamSim `get_preprocess_fn("DEFAULT")`, `_preprocess` |
 | Embedding | **CLS token of the 12th block's output, before the final LayerNorm** | DreamSim paper; code extracts layer 11 (0-indexed) |
 | Distance | Cosine distance | DreamSim |
-| Fine-tuning | LoRA on `qkv` only, r = 16, α = 32, dropout 0.2; Adam, lr 3e-4, wd 0, batch 32, 8 epochs, margin 0.05 | DreamSim repo `configs/train_single_model_lora.yaml` |
+| Fine-tuning | LoRA on `qkv` only, r = 16, α = 32, dropout 0.2, bias none; Adam, betas (0.5, 0.999), lr 3e-4, wd 0, batch 32, 8 epochs, margin 0.05 | DreamSim repo `configs/train_single_model_lora.yaml`; betas from `training/train.py` |
+| Loss | Hinge on logit = d0 − d1, target {0,1} → {−1,+1}, summed then divided by batch size | DreamSim `training/train.py`, `HingeLoss` |
 
 Note the paper reports α = 0.5, dropout 0.3, batch 512 for single models, which differs
 from the repo config. We follow the repo config and state the discrepancy.
+
+Deviation: DreamSim trains in fp32 (no precision set on its Lightning `Trainer`). We use
+fp16 autocast with gradient scaling on the T4 (≈2× faster); distances and loss in fp32.
+If B1 misses 94.6 ± 1.0, fp32 is the first thing to try.
 
 Reproduction targets: zero-shot DINO **90.1**, LoRA-tuned DINO **94.6** (NIGHTS test,
 DreamSim Table 5).
